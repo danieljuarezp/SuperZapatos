@@ -1,0 +1,88 @@
+﻿
+@{
+    ViewBag.Title = "Articulos por tienda";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <br />
+        <div align="center">
+            <h1>Articulos de la tienda "@ViewBag.StoreName"</h1>
+        </div>
+        <div class="well well-sm">
+            <div class="row">
+                <div class="col-md-12">
+                    <input type="button" value="Volver" id="back" class="btn btn-success" />
+                </div>
+            </div>
+        </div>
+        <hr />
+        <div class="table-responsive">
+            <br />
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Nombre</th>
+                        <th>Descripción</th>
+                        <th>Precio</th>
+                        <th>Total en estante</th>
+                        <th>Total en bodega</th>
+                        <th>Editar</th>
+                        <th>Eliminar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var article in ViewBag.AllArticles)
+                    {
+                        <tr>
+                            <th>@article.Id</th>
+                            <th>@article.Name</th>
+                            <th>@article.Description</th>
+                            <th>@article.Price</th>
+                            <th>@article.TotalInShelf</th>
+                            <th>@article.TotalInVault</th>
+                            <th><button type="button" class="btn btn-outline-success" onclick="editArticle('@article.Id')"><i class="fa fa-pencil-alt"></i></button></th>
+                            <th><button type="button" class="btn btn-outline-success" onclick="deleteArticle('@article.Id')"><i class="fa fa-trash"></i></button></th>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+@section Scripts
+{
+    <script>
+        $("#back").click(function () {
+            window.location.href = "@Url.Action("Index", "Store")";
+        });
+
+        function editArticle(articleId) {
+            window.location.href = "@Url.Action("Edit", "Article")/" + articleId;
+        }
+
+        function deleteArticle(articleId) {
+            swal({
+                title: "¿Estas seguro de eliminar este articulo?",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "Si",
+                closeOnConfirm: false
+            }, function () {
+                var url = "@Url.Action("Delete", "Article")";
+                $.post(url, { id: articleId }, (data) => {
+                     mdtoast("Articulo eliminado con exito!", {
+                        type: mdtoast.SUCCESS,
+                        interaction: true,
+                        actionText: "OK!"
+                    });
+                    setTimeout(function () {
+                        location.reload();
+                    }, 1500);
+                });
+            });
+        }
+    </script>
+}

@@ -1,0 +1,93 @@
+﻿
+@{
+    ViewBag.Title = "Tiendas";
+}
+<div class="row">
+    <div class="col-md-12">
+        <br />
+        <div align="center">
+            <h1>Tiendas</h1>
+        </div>
+        <div class="well well-sm">
+            <div class="row">
+                <div class="col-md-12">
+                    <input type="button" value="Nueva" id="newStore" class="btn btn-success" />
+                </div>
+            </div>
+        </div>
+        <hr />
+        <div class="table-responsive">
+            <br />
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Nombre</th>
+                        <th>Dirección</th>
+                        <th>Articulos</th>
+                        <th>Agregar Articulo</th>
+                        <th>Editar</th>
+                        <th>Eliminar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var store in ViewBag.AllStores)
+                    {
+                        <tr>
+                            <th>@store.Id</th>
+                            <th>@store.Name</th>
+                            <th>@store.Address</th>
+                            <th><button type="button" class="btn btn-outline-success" onclick="allArticles('@store.Id')"><i class="fa fa-search"></i></button></th>
+                            <th><button type="button" class="btn btn-outline-success" onclick="addArticles('@store.Id')"><i class="fa fa-plus"></i></button></th>
+                            <th><button type="button" class="btn btn-outline-success" onclick="editStore('@store.Id')"><i class="fa fa-pencil-alt"></i></button></th>
+                            <th><button type="button" class="btn btn-outline-success" onclick="deleteStore('@store.Id')"><i class="fa fa-trash"></i></button></th>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+@section Scripts
+{
+    <script>
+        $("#newStore").click(function () {
+            window.location.href = "@Url.Action("Create", "Store")";
+        });
+
+        function allArticles(storeId) {
+             window.location.href = "@Url.Action("AllArticlesByStore", "Article")/"+ storeId;
+        }
+
+        function addArticles(storeId) {
+             window.location.href = "@Url.Action("AddArticle", "Article")/"+ storeId;
+        }
+
+        function editStore(storeId) {
+             window.location.href = "@Url.Action("Edit", "Store")/"+ storeId;
+        }
+
+        function deleteStore(storeId) {
+             swal({
+                title: "¿Estas seguro de eliminar esta tienda?",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "Si",
+                closeOnConfirm: false
+            }, function () {
+                var url = "@Url.Action("Delete", "Store")";
+                $.post(url, { id: storeId }, (data) => {
+                     mdtoast("Tienda y articulos eliminados con exito!", {
+                        type: mdtoast.SUCCESS,
+                        interaction: true,
+                        actionText: "OK!"
+                    });
+                    setTimeout(function () {
+                        location.reload();
+                    }, 1500);
+                });
+            });
+        }
+    </script>
+}

@@ -1,0 +1,114 @@
+﻿
+@{
+    ViewBag.Title = "Agregar articulo";
+}
+<div class="row">
+    <div class="col-md-12">
+        <br />
+        <div align="center">
+            <h1>Agregar Articulo a la tienda "@ViewBag.StoreName"</h1>
+        </div>
+        <div class="well well-sm">
+            <div class="row">
+                <div class="col-md-12">
+                    <input type="button" value="Guardar" id="save" class="btn btn-success" />
+                    <input type="button" value="Cancelar" id="cancel" class="btn btn-danger" />
+                </div>
+            </div>
+        </div>
+        <hr />
+        <div class="form-horizontal">
+            <input type="hidden" value="@ViewBag.StoreId" id="storeId" />
+            <div class="form-group">
+                <label class="control-label col-md-3">Nombre</label>
+                <div class="col-md-9">
+                    <input class="form-control" type="text" id="name" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label col-md-3">Descripción</label>
+                <div class="col-md-9">
+                    <input class="form-control" type="text" id="description" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label col-md-3">Precio</label>
+                <div class="col-md-9">
+                    <input class="form-control" type="number" id="price" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label col-md-3">Total en estante</label>
+                <div class="col-md-9">
+                    <input class="form-control" type="number" id="totalInShelf" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label col-md-3">Total en bodega</label>
+                <div class="col-md-9">
+                    <input class="form-control" type="number" id="totalInVault" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts
+{
+    <script>
+        $("#cancel").click(function () {
+            window.location.href = "@Url.Action("Index", "Store")";
+        });
+        $("#save").click(function () {
+            let name = $("#name").val().trim();
+            let description = $("#description").val().trim();
+            let price = parseFloat($("#price").val()) || 0;
+            let totalInShelf = parseInt($("#totalInShelf").val()) || 0;
+            let totalInVault = parseInt($("#totalInVault").val()) || 0;
+            let storeId = $("#storeId").val();
+
+            if (name == "" || description == "") {
+                mdtoast("Completar nombre y descripción", {
+                    type: mdtoast.ERROR,
+                    interaction: true,
+                    actionText: "OK!"
+                });
+                return;
+            }
+
+            let article = {
+                Name: name,
+                Description: description,
+                Price: price,
+                TotalInShelf: totalInShelf,
+                TotalInVault: totalInVault,
+                StoreId: storeId
+            }
+
+            let url = "@Url.Action("AddArticle", "Article")";
+
+            $.post(url, article)
+                .then(result => {
+                    mdtoast("Articulo creado con exito!", {
+                        type: mdtoast.SUCCESS,
+                        interaction: true,
+                        actionText: "OK!"
+                    });
+                    setTimeout(function () {
+                        window.location.href = "@Url.Action("Index", "Store")";
+                    }, 1500);
+                })
+                .fail(error => {
+                    mdtoast("Ocurrio un error!", {
+                        type: mdtoast.ERROR,
+                        interaction: true,
+                        actionText: "OK!"
+                    });
+                })
+
+        });
+    </script>
+}

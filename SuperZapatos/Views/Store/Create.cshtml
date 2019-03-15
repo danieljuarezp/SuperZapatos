@@ -1,0 +1,86 @@
+﻿
+@{
+    ViewBag.Title = "Nueva tienda";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <br />
+        <div align="center">
+            <h1>Nueva Tienda</h1>
+        </div>
+        <div class="well well-sm">
+            <div class="row">
+                <div class="col-md-12">
+                    <input type="button" value="Guardar" id="save" class="btn btn-success" />
+                    <input type="button" value="Cancelar" id="cancel" class="btn btn-danger" />
+                </div>
+            </div>
+        </div>
+        <hr />
+        <div class="form-horizontal">
+            <div class="form-group">
+                <label class="control-label col-md-3">Nombre</label>
+                <div class="col-md-9">
+                    <input class="form-control" type="text" id="name" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label col-md-3">Dirección</label>
+                <div class="col-md-9">
+                    <input class="form-control" type="text" id="address" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts
+{
+    <script>
+        $("#cancel").click(function () {
+            window.location.href = "@Url.Action("Index", "Store")";
+        });
+        $("#save").click(function () {
+            let name = $("#name").val().trim();
+            let address = $("#address").val().trim();
+
+            if (name == "" || address == "") {
+                mdtoast("Completar todos los campos", {
+                    type: mdtoast.ERROR,
+                    interaction: true,
+                    actionText: "OK!"
+                });
+                return;
+            }
+
+            let store = {
+                Name: name,
+                Address: address
+            }
+
+            let url = "@Url.Action("Create", "Store")";
+
+            $.post(url, store)
+                .then(result => {
+                    mdtoast("Tienda creada con exito!", {
+                        type: mdtoast.SUCCESS,
+                        interaction: true,
+                        actionText: "OK!"
+                    });
+                    setTimeout(function () {
+                        window.location.href = "@Url.Action("Index", "Store")";
+                    }, 1500);
+                })
+                .fail(error => {
+                    mdtoast("Ocurrio un error!", {
+                        type: mdtoast.ERROR,
+                        interaction: true,
+                        actionText: "OK!"
+                    });
+                })
+
+        });
+    </script>
+}
+
